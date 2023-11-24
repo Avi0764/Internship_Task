@@ -1,0 +1,59 @@
+mport random
+
+class Question:
+    def __init__(self, question, subject, topic, difficulty, marks):
+        self.question = question
+        self.subject = subject
+        self.topic = topic
+        self.difficulty = difficulty
+        self.marks = marks
+
+class QuestionStore:
+    def __init__(self):
+        self.questions = []
+
+    def add_question(self, question):
+        self.questions.append(question)
+
+    def get_questions(self, difficulty, count):
+        filtered_questions = [q for q in self.questions if q.difficulty == difficulty]
+        return random.sample(filtered_questions, min(count, len(filtered_questions)))
+
+class QuestionPaperGenerator:
+    def __init__(self, question_store):
+        self.question_store = question_store
+
+    def generate_question_paper(self, total_marks, difficulty_distribution):
+        question_paper = []
+
+        for difficulty, percentage in difficulty_distribution.items():
+            marks_for_difficulty = int(total_marks * percentage / 100)
+            questions = self.question_store.get_questions(difficulty, marks_for_difficulty)
+
+            for q in questions:
+                question_paper.append(q)
+
+        return question_paper
+
+# Example usage:
+
+# Create questions
+question1 = Question("What is the speed of light?", "Physics", "Waves", "Easy", 5)
+question2 = Question("Describe the process of photosynthesis.", "Biology", "Botany", "Medium", 10)
+question3 = Question("Solve the quadratic equation x^2 - 4x + 4 = 0.", "Math", "Algebra", "Hard", 15)
+# Add questions to the store
+question_store = QuestionStore()
+question_store.add_question(question1)
+question_store.add_question(question2)
+question_store.add_question(question3)
+
+# Create a QuestionPaperGenerator
+generator = QuestionPaperGenerator(question_store)
+
+# Generate a question paper with specified difficulty distribution
+difficulty_distribution = {"Easy": 20, "Medium": 50, "Hard": 30}
+question_paper = generator.generate_question_paper(100, difficulty_distribution)
+
+# Print the generated question paper
+for q in question_paper:
+    print(f"Q: {q.question}\nSubject: {q.subject}\nTopic: {q.topic}\nDifficulty: {q.difficulty}\nMarks: {q.marks}\n")
